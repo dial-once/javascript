@@ -2983,4 +2983,36 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 We encourage you to fork this guide and change the rules to fit your team's style guide. Below, you may list some amendments to the style guide. This allows you to periodically update your style guide without having to deal with merge conflicts.
 
+### Keep it simple
+Never try to handle all the edge cases and try to make it modular: you will most probably make it harder to maintain and introduce bug, plus it will take you more time!
+
+In the sample below, the two piece of code are doing the same thing:
+
+```js
+//bad
+var modules = ['module1', 'module2', 'module3'];
+
+function easyLoader(moduleName) {
+  if (!moduleName || moduleName.length === 0) throw new Error('Invalid parameter, must be a string.');
+  if (modules.indexOf(moduleName.toLowerCase()) === -1 throw new Error('Invalid module, undeclared!');
+  
+  if (!require('fs').lstatSync('node_modules/' + moduleName).isDirectory()) throw new Error('Packages are not installed!');
+  return require(moduleName);
+}
+
+module.exports = easyLoader;
+
+
+//good
+function easyLoader(moduleName) {
+  return require(moduleName);
+}
+module.exports = easyLoader;
+```
+
+The first one may appear more complete but it does the same: if module does not exists, it will crash.
+
+Keep in mind that some will read your code to debug it someday, or add a feature. And also something very important:
+**if your module is improperly used, it is ok for it to crash! just document it**
+
 # };
